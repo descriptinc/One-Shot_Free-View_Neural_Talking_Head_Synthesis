@@ -1,8 +1,10 @@
+# pyright: reportMissingImports=false
+
 import torch
 from torch import nn
 import torch.nn.functional as F
-from modules.util import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d, ResBlock3d, SPADEResnetBlock
-from modules.dense_motion import DenseMotionNetwork
+from .util import ResBlock2d, SameBlock2d, UpBlock2d, DownBlock2d, ResBlock3d, SPADEResnetBlock
+from .dense_motion import DenseMotionNetwork
 
 
 class OcclusionAwareGenerator(nn.Module):
@@ -12,7 +14,7 @@ class OcclusionAwareGenerator(nn.Module):
 
     def __init__(self, image_channel, feature_channel, num_kp, block_expansion, max_features, num_down_blocks, reshape_channel, reshape_depth,
                  num_resblocks, estimate_occlusion_map=False, dense_motion_params=None, estimate_jacobian=False):
-        super(OcclusionAwareGenerator, self).__init__()
+        super().__init__()
 
         if dense_motion_params is not None:
             self.dense_motion_network = DenseMotionNetwork(num_kp=num_kp, feature_channel=feature_channel,
@@ -162,7 +164,7 @@ class OcclusionAwareSPADEGenerator(nn.Module):
 
     def __init__(self, image_channel, feature_channel, num_kp, block_expansion, max_features, num_down_blocks, reshape_channel, reshape_depth,
                  num_resblocks, estimate_occlusion_map=False, dense_motion_params=None, estimate_jacobian=False):
-        super(OcclusionAwareSPADEGenerator, self).__init__()
+        super().__init__()
 
         if dense_motion_params is not None:
             self.dense_motion_network = DenseMotionNetwork(num_kp=num_kp, feature_channel=feature_channel,

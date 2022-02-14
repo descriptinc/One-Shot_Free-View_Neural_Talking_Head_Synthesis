@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 from tqdm import trange
 import torch
 

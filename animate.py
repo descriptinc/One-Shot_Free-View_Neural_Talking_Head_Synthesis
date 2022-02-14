@@ -1,3 +1,6 @@
+# pyright: reportMissingImports=false
+# pyright: reportMissingModuleSource=false
+
 import os
 from tqdm import tqdm
 

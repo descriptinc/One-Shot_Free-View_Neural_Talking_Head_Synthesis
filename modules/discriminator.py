@@ -1,6 +1,8 @@
+# pyright: reportMissingImports=false
+
 from torch import nn
 import torch.nn.functional as F
-from modules.util import kp2gaussian
+from .util import kp2gaussian
 import torch
 
 
@@ -10,7 +12,7 @@ class DownBlock2d(nn.Module):
     """
 
     def __init__(self, in_features, out_features, norm=False, kernel_size=4, pool=False, sn=False):
-        super(DownBlock2d, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(in_channels=in_features, out_channels=out_features, kernel_size=kernel_size)
 
         if sn:
@@ -40,7 +42,7 @@ class Discriminator(nn.Module):
 
     def __init__(self, num_channels=3, block_expansion=64, num_blocks=4, max_features=512,
                  sn=False, **kwargs):
-        super(Discriminator, self).__init__()
+        super().__init__()
 
         down_blocks = []
         for i in range(num_blocks):
@@ -72,7 +74,7 @@ class MultiScaleDiscriminator(nn.Module):
     """
 
     def __init__(self, scales=(), **kwargs):
-        super(MultiScaleDiscriminator, self).__init__()
+        super().__init__()
         self.scales = scales
         discs = {}
         for scale in scales:

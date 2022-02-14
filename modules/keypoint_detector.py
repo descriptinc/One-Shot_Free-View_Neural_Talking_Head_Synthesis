@@ -1,9 +1,11 @@
+# pyright: reportMissingImports=false
+
 from torch import nn
 import torch
 import torch.nn.functional as F
 
 from sync_batchnorm import SynchronizedBatchNorm2d as BatchNorm2d
-from modules.util import KPHourglass, make_coordinate_grid, AntiAliasInterpolation2d, ResBottleneck
+from .util import KPHourglass, make_coordinate_grid, AntiAliasInterpolation2d, ResBottleneck
 
 
 class KPDetector(nn.Module):
@@ -13,7 +15,7 @@ class KPDetector(nn.Module):
 
     def __init__(self, block_expansion, feature_channel, num_kp, image_channel, max_features, reshape_channel, reshape_depth,
                  num_blocks, temperature, estimate_jacobian=False, scale_factor=1, single_jacobian_map=False):
-        super(KPDetector, self).__init__()
+        super().__init__()
 
         self.predictor = KPHourglass(block_expansion, in_features=image_channel,
                                      max_features=max_features,  reshape_features=reshape_channel, reshape_depth=reshape_depth, num_blocks=num_blocks)
@@ -88,7 +90,7 @@ class HEEstimator(nn.Module):
     """
 
     def __init__(self, block_expansion, feature_channel, num_kp, image_channel, max_features, num_bins=66, estimate_jacobian=True):
-        super(HEEstimator, self).__init__()
+        super().__init__()
 
         self.conv1 = nn.Conv2d(in_channels=image_channel, out_channels=block_expansion, kernel_size=7, padding=3, stride=2)
         self.norm1 = BatchNorm2d(block_expansion, affine=True)

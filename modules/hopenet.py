@@ -1,3 +1,5 @@
+# pyright: reportMissingImports=false
+
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -9,7 +11,7 @@ class Hopenet(nn.Module):
     # Predicts Euler angles by binning and regression with the expected value
     def __init__(self, block, layers, num_bins):
         self.inplanes = 64
-        super(Hopenet, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
         self.bn1 = nn.BatchNorm2d(64)
@@ -75,7 +77,7 @@ class ResNet(nn.Module):
     # ResNet for regression of 3 Euler angles.
     def __init__(self, block, layers, num_classes=1000):
         self.inplanes = 64
-        super(ResNet, self).__init__()
+        super().__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
                                bias=False)
         self.bn1 = nn.BatchNorm2d(64)
@@ -133,7 +135,7 @@ class AlexNet(nn.Module):
     # AlexNet laid out as a Hopenet - classify Euler angles in bins and
     # regress the expected value.
     def __init__(self, num_bins):
-        super(AlexNet, self).__init__()
+        super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
             nn.ReLU(inplace=True),

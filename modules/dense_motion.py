@@ -1,7 +1,9 @@
+# pyright: reportMissingImports=false
+
 from torch import nn
 import torch.nn.functional as F
 import torch
-from modules.util import Hourglass, make_coordinate_grid, kp2gaussian
+from .util import Hourglass, make_coordinate_grid, kp2gaussian
 
 from sync_batchnorm import SynchronizedBatchNorm3d as BatchNorm3d
 
@@ -13,7 +15,7 @@ class DenseMotionNetwork(nn.Module):
 
     def __init__(self, block_expansion, num_blocks, max_features, num_kp, feature_channel, reshape_depth, compress,
                  estimate_occlusion_map=False):
-        super(DenseMotionNetwork, self).__init__()
+        super().__init__()
         # self.hourglass = Hourglass(block_expansion=block_expansion, in_features=(num_kp+1)*(feature_channel+1), max_features=max_features, num_blocks=num_blocks)
         self.hourglass = Hourglass(block_expansion=block_expansion, in_features=(num_kp+1)*(compress+1), max_features=max_features, num_blocks=num_blocks)
 

@@ -1,3 +1,6 @@
+# pyright: reportMissingImports=false
+# pyright: reportMissingModuleSource=false
+
 import matplotlib
 
 matplotlib.use('Agg')

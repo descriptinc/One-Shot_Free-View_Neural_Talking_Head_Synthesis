@@ -1,3 +1,6 @@
+# pyright: reportMissingImports=false
+# pyright: reportMissingModuleSource=false
+
 import face_alignment
 import skimage.io
 import numpy

@@ -1,11 +1,13 @@
+# pyright: reportMissingImports=false
+
 from torch import nn
 import torch
 import torch.nn.functional as F
-from modules.util import AntiAliasInterpolation2d, make_coordinate_grid_2d
+from .util import AntiAliasInterpolation2d, make_coordinate_grid_2d
 from torchvision import models
 import numpy as np
 from torch.autograd import grad
-import modules.hopenet as hopenet
+from . import hopenet
 from torchvision import transforms
 
 
@@ -14,7 +16,7 @@ class Vgg19(torch.nn.Module):
     Vgg19 network for perceptual loss.
     """
     def __init__(self, requires_grad=False):
-        super(Vgg19, self).__init__()
+        super().__init__()
         vgg_pretrained_features = models.vgg19(pretrained=True).features
         self.slice1 = torch.nn.Sequential()
         self.slice2 = torch.nn.Sequential()
@@ -57,7 +59,7 @@ class ImagePyramide(torch.nn.Module):
     Create image pyramide for computing pyramide perceptual loss.
     """
     def __init__(self, scales, num_channels):
-        super(ImagePyramide, self).__init__()
+        super().__init__()
         downs = {}
         for scale in scales:
             downs[str(scale).replace('.', '-')] = AntiAliasInterpolation2d(num_channels, scale)
@@ -130,8 +132,8 @@ def headpose_pred_to_degree(pred):
     device = pred.device
     idx_tensor = [idx for idx in range(66)]
     idx_tensor = torch.FloatTensor(idx_tensor).to(device)
-    pred = F.softmax(pred)
-    degree = torch.sum(pred*idx_tensor, axis=1) * 3 - 99
+    pred = F.softmax(pred, dim=1)
+    degree = torch.sum(pred*idx_tensor, dim=1) * 3 - 99
 
     return degree
 
@@ -222,7 +224,18 @@ def keypoint_transformation(kp_canonical, he, estimate_jacobian=True):
     else:
         jacobian_transformed = None
 
-    return {'value': kp_transformed, 'jacobian': jacobian_transformed}
+    out = {
+        'value': kp_transformed,
+        'jacobian': jacobian_transformed,
+        "yaw": yaw,
+        "pitch": pitch,
+        "roll": roll,
+        "t": t,
+        "exp": exp,
+        "matrix": rot_mat
+    }
+
+    return out
 
 class GeneratorFullModel(torch.nn.Module):
     """
@@ -230,7 +243,7 @@ class GeneratorFullModel(torch.nn.Module):
     """
 
     def __init__(self, kp_extractor, he_estimator, generator, discriminator, train_params, estimate_jacobian=True):
-        super(GeneratorFullModel, self).__init__()
+        super().__init__()
         self.kp_extractor = kp_extractor
         self.he_estimator = he_estimator
         self.generator = generator
@@ -272,7 +285,13 @@ class GeneratorFullModel(torch.nn.Module):
         kp_driving = keypoint_transformation(kp_canonical, he_driving, self.estimate_jacobian)
 
         generated = self.generator(x['source'], kp_source=kp_source, kp_driving=kp_driving)
-        generated.update({'kp_source': kp_source, 'kp_driving': kp_driving})
+        generated.update({
+            'kp_source': kp_source,
+            'kp_driving': kp_driving,
+            "kp_canonical": kp_canonical,
+            "he_source": he_source,
+            "he_driving": he_driving
+        })
 
         loss_values = {}
 
@@ -402,7 +421,7 @@ class DiscriminatorFullModel(torch.nn.Module):
     """
 
     def __init__(self, kp_extractor, generator, discriminator, train_params):
-        super(DiscriminatorFullModel, self).__init__()
+        super().__init__()
         self.kp_extractor = kp_extractor
         self.generator = generator
         self.discriminator = discriminator

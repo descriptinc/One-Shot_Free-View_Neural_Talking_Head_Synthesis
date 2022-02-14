@@ -1,3 +1,6 @@
+# pyright: reportMissingImports=false
+# pyright: reportMissingModuleSource=false
+
 """
 Code from https://github.com/hassony2/torch_videovision
 """
